@@ -1,0 +1,205 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1664436200.json", 
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"class_name",
+		"enum_name",
+		"covergroup_name",
+		"fsm_descriptions",
+		"scenarios"
+	],
+	"properties": {
+		"class_name": {
+			"$id": "#root/class_name", 
+			"title": "Class_name", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"enum_name": {
+			"$id": "#root/enum_name", 
+			"title": "Enum_name", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"covergroup_name": {
+			"$id": "#root/cg_name", 
+			"title": "Covergroup_name", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"fsm_descriptions": {
+			"$id": "#root/fsm_descriptions", 
+			"title": "Fsm_descriptions", 
+			"type": "array",
+			"default": [],
+			"items":{
+				"$id": "#root/fsm_descriptions/items", 
+				"title": "Items", 
+				"type": "object",
+				"required": [
+					"source_name",
+					"valid_states"
+				],
+				"properties": {
+					"source_name": {
+						"$id": "#root/fsm_descriptions/items/source_name", 
+						"title": "Source_name", 
+						"type": "string",
+						"default": "",
+						"pattern": "^.*$"
+					},
+					"valid_states": {
+						"$id": "#root/fsm_descriptions/items/valid_states", 
+						"title": "Valid_states", 
+						"type": "array",
+						"default": [],
+						"items":{
+							"$id": "#root/fsm_descriptions/items/valid_states/items", 
+							"title": "Items", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						}
+					}
+				}
+			}
+
+		},
+		"scenarios": {
+			"$id": "#root/scenarios", 
+			"title": "Scenarios", 
+			"type": "array",
+			"default": [],
+			"items":{
+				"$id": "#root/scenarios/items", 
+				"title": "Items", 
+				"type": "object",
+				"required": [
+					"description",
+					"scenario_name",
+					"signal"
+				],
+				"properties": {
+					"description": {
+						"$id": "#root/scenarios/items/description", 
+						"title": "Description", 
+						"type": "string",
+						"default": "",
+						"pattern": "^.*$"
+					},
+					"scenario_name": {
+						"$id": "#root/scenarios/items/scenario_name", 
+						"title": "Scenario_name", 
+						"type": "string",
+						"default": "",
+						"pattern": "^.*$"
+					},
+					"signal": {
+						"$id": "#root/scenarios/items/signal", 
+						"title": "Signal", 
+						"type": "array",
+						"default": [],
+						"items":{
+							"$id": "#root/scenarios/items/signal/items", 
+							"title": "Items", 
+							"type": "object",
+							"required": [
+								"name",
+								"wave",
+								"data"
+							],
+							"properties": {
+								"name": {
+									"$id": "#root/scenarios/items/signal/items/name", 
+									"title": "Name", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"wave": {
+									"$id": "#root/scenarios/items/signal/items/wave", 
+									"title": "Wave", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"data": {
+									"$id": "#root/scenarios/items/signal/items/data", 
+									"title": "Data", 
+									"type": "array",
+									"default": [],
+									"items":{
+										"$id": "#root/scenarios/items/signal/items/data/items", 
+										"title": "Items", 
+										"type": "string",
+										"default": "",
+										"pattern": "^.*$"
+									}
+								},
+								"source_name": {
+									"$id": "#root/scenarios/items/signal/items/source_name", 
+									"title": "Source_name", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"state_synonyms": {
+									"$id": "#root/scenarios/items/signal/items/state_synonyms", 
+									"title": "Aliases",
+									"type": "array",
+									"default": [],
+									"items": {
+										"$id": "#root/scenarios/items/signal/items/state_synonyms/items",
+										"title": "Items",
+										"type": "object",
+										"required": [
+											"original_state_names",
+											"json_state_name"
+										],
+										"properties": {
+											"original_state_name": {
+												"$id": "#root/scenarios/items/signal/items/state_synonyms/items/original_state_name",
+												"title": "Original state name",
+												"type": "array"
+											},
+											"json_state_name": {
+												"$id": "#root/scenarios/items/signal/items/state_synonyms/items/json_state_name",
+												"title": "JSON state name",
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+
+					},
+					"config": {
+						"$id": "#root/scenarios/items/config", 
+						"title": "Config", 
+						"type": "object",
+						"required": [
+							"hscale"
+						],
+						"properties": {
+							"hscale": {
+								"$id": "#root/scenarios/items/config/hscale", 
+								"title": "Hscale", 
+								"type": "integer",
+								"default": 0
+							}
+						}
+					}
+
+				}
+			}
+
+		}
+	}
+}

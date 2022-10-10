@@ -1,0 +1,15 @@
+# Censor
+-f $CENSOR_ROOT/censor.list
+
+# SVUnit
++incdir+$SVUNIT_INSTALL/svunit_base
++incdir+$SVUNIT_INSTALL/svunit_base/junit-xml
+$SVUNIT_INSTALL/svunit_base/junit-xml/junit_xml.sv
+$SVUNIT_INSTALL/svunit_base/svunit_pkg.sv
+
+# Unit tests
++incdir+$PROJ_ROOT/sv/test/tb
+$PROJ_ROOT/sv/test/unit_tests/weather_coverage_unit_test.sv
+$PROJ_ROOT/sv/test/unit_tests/simple_example_coverage_unit_test.sv
+testsuite.sv
+testrunner.sv

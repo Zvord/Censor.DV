@@ -1,0 +1,12 @@
+<testsuites>
+  <testsuite name="testsuite">
+    <testcase classname="weather_coverage_ut" name="basic">
+    </testcase>
+    <testcase classname="weather_coverage_ut" name="cross_no">
+    </testcase>
+    <testcase classname="weather_coverage_ut" name="cross_yes">
+    </testcase>
+    <testcase classname="simple_example_coverage_ut" name="simple_test">
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,19 @@
+QuestaSim-64 vlog 10.4c Compiler 2015.07 Jul 20 2015
+Start time: 18:30:44 on Oct 06,2022
+vlog -l compile.log -f ../list/tb.list -f .svunit.f "+define+SVUNIT_VERSION="SVUnit unreleased"" 
+-- Compiling package censor_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) Using implicit +incdir+C:/questasim64_10.4c/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+-- Compiling package censor_pkg
+-- Importing package scenario_coverage_pkg
+-- Compiling package top_sv_unit
+-- Importing package tb_pkg
+-- Importing package censor_pkg.1d Built-in)
+-- Importing package scenario_coverage_pkg
+-- Compiling module top
+** Error: (vlog-7) Failed to open design unit file "/mnt/c/Users/zvord/OneDrive/workspace/supa_grupa/svunit/svunit_base/junit-xml/junit_xml.sv" in read mode.
+
+No such file or directory. (errno = ENOENT)
+End time: 18:30:45 on Oct 06,2022, Elapsed time: 0:00:01
+Errors: 1, Warnings: 0

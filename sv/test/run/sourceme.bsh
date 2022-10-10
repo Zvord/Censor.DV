@@ -1,0 +1,6 @@
+export PROJ_ROOT=`readlink -f ../../../`
+export CENSOR_ROOT=$PROJ_ROOT/sv/src
+export SVUNIT_INSTALL=$PROJ_ROOT/svunit
+if [ "${PATH/$SVUNIT_INSTALL\/bin/}" == "$PATH" ]; then
+  export PATH=$PATH:$SVUNIT_INSTALL"/bin"
+fi

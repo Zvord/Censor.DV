@@ -1,0 +1,46 @@
+{
+  "$schema": "../mySchema.json",
+  "class_name": "simple_example_coverage",
+  "enum_name": "enum_type_that_will_be_covered",
+  "covergroup_name": "just_a_covergroup",
+  "fsm_descriptions": [
+    {
+      "source_name": "fsm_0",
+      "valid_states": ["state_a", "state_b", "state_c"]
+    },
+    {
+      "source_name": "fsm_1",
+      "valid_states": ["state_1", "state_2"]
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_name": "some_name",
+      "description": "A simple example",
+      "signal": [
+        {
+          "name": "Pretty FSM 0 name",
+          "source_name": "fsm_0",
+          "wave": "2.3.4.",
+          "data": [ "state_a", "state_b", "state_c" ],
+          "event_name": "FSM 0 event",
+          "node": "..a"
+        },
+        {
+          "name": "Pretty FSM 1 name",
+          "source_name": "fsm_1",
+          "wave": "2..3.4",
+          "data": [ "state_1", "state_2", "state_1" ],
+          "node": "...b"
+        },
+        {
+          "name": "FSM 0 event",
+          "wave": "0.20..",
+          "data": [ "BOOM" ]
+        }
+      ],
+      "edge": ["a~-b"],
+      "config": { "hscale": 2 }
+    }
+  ]
+}

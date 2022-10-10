@@ -1,0 +1,2 @@
++incdir+$CENSOR_ROOT
+$CENSOR_ROOT/censor_pkg.sv

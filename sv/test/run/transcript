@@ -1,0 +1,79 @@
+# vsim -c -do "run -all; quit" testrunner "+SVUNIT_FILTER=*" 
+# Start time: 13:15:24 on Oct 10,2022
+# ** Note: (vsim-3812) Design is being optimized...
+# 
+# ** Warning: Y:\sv\src/censor_scenario.sv(78): (vopt-2250) Function "sample_event" has no return value assignment.
+# 
+# //  Questa Sim
+# //  Version 10.4c win32 Jul 20 2015
+# //
+# //  Copyright 1991-2015 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# Loading sv_std.std
+# Loading mtiUvm.uvm_pkg
+# Loading work.censor_pkg(fast)
+# Loading work.simple_example_coverage_unit_test_sv_unit(fast)
+# Loading work.weather_coverage_unit_test_sv_unit(fast)
+# Loading work.junit_xml(fast)
+# Loading work.svunit_pkg(fast)
+# Loading work.testrunner(fast)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading C:/questasim_10.4c/uvm-1.1d\win32\uvm_dpi.dll
+# run -all
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(215) @ 0: reporter [Questa UVM] QUESTA_UVM-1.2.2
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(217) @ 0: reporter [Questa UVM]  questa_uvm::init(+struct)
+# INFO:  [0][testsuite]: Registering Unit Test Case weather_coverage_ut
+# INFO:  [0][testsuite]: Registering Unit Test Case simple_example_coverage_ut
+# INFO:  [0][testrunner]: Registering Test Suite testsuite
+# INFO:  [0][testsuite]: RUNNING
+# INFO:  [0][weather_coverage_ut]: RUNNING
+# INFO:  [0][weather_coverage_ut]: basic::RUNNING
+# INFO:  [0][weather_coverage_ut]: basic::PASSED
+# INFO:  [0][weather_coverage_ut]: cross_no::RUNNING
+# ** Warning: (vsim-3829) Y://sv/test/unit_tests/weather_coverage_unit_test.sv(79): Non-existent associative array entry. Returning default value.
+# INFO:  [0][weather_coverage_ut]: cross_no::PASSED
+# INFO:  [0][weather_coverage_ut]: cross_yes::RUNNING
+# INFO:  [0][weather_coverage_ut]: cross_yes::PASSED
+# INFO:  [0][simple_example_coverage_ut]: RUNNING
+# INFO:  [0][simple_example_coverage_ut]: simple_test::RUNNING
+# INFO:  [0][simple_example_coverage_ut]: simple_test::PASSED
+# INFO:  [0][weather_coverage_ut]: PASSED (3 of 3 tests passing)
+# INFO:  [0][simple_example_coverage_ut]: PASSED (1 of 1 tests passing)
+# 
+# INFO:  [0][testsuite]: PASSED (2 of 2 testcases passing)
+# 
+# INFO:  [0][testrunner]: PASSED (1 of 1 suites passing) [For SVUnit Version info, see: $SVUNIT_INSTALL/VERSION.txt]
+# ** Note: $finish    : testrunner.sv(40)
+#    Time: 0 ns  Iteration: 4  Instance: /testrunner
+# End time: 13:15:33 on Oct 10,2022, Elapsed time: 0:00:09
+# Errors: 0, Warnings: 2

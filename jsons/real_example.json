@@ -1,0 +1,152 @@
+{
+  "$schema": "../mySchema.json",
+  "class_name": "weather_coverage",
+  "enum_name": "weather_cg_enum",
+  "covergroup_name": "weather_scenario_cg",
+  "fsm_descriptions": [
+    {
+      "source_name": "weather_fsm0",
+      "valid_states": ["SUNNY", "CLOUDY", "RAIN", "SNOW", "HAIL"]
+    },
+    {
+      "source_name": "weather_fsm1",
+      "valid_states": ["SUNNY", "CLOUDY", "RAIN", "SNOW", "HAIL"]
+    },
+    {
+      "source_name": "leisure_fsm",
+      "valid_states": ["WALK","SLEEP","MOVIE","CAFE","BIKE"]
+    }
+  ],
+    "scenarios": [
+      {
+        "description": "Sudden rain during a sunny day",
+        "scenario_name": "SUN_RAIN_SUN",
+        "signal": [
+          {
+            "name": "Weather",
+            "wave": "2.3.4.",
+            "data": ["SUNNY","RAIN","SUNNY"],
+            "source_name": "weather_fsm0"
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },
+      {
+        "description": "Eclipse in the rain",
+        "scenario_name": "ECLIPSE_EVENT",
+        "signal": [
+          {
+            "name": "Weather",
+            "wave": "2.3.4.",
+            "data": ["RAIN","SUNNY","RAIN"],
+            "event_name": "Weather event",
+            "source_name": "weather_fsm0"
+          },
+          {
+            "name": "Weather event",
+            "wave": "0.2.0.",
+            "data": ["ECLIPSE"]
+          }
+        ]
+      },
+      {
+        "description": "ALIASES_EXAMPLE",
+        "scenario_name": "PRECIPATION_ON_OFF",
+        "signal": [
+          {
+            "name": "Weather",
+            "source_name": "weather_fsm0",
+            "wave": "2.3.4.2.",
+            "data": ["PRECIP_ON","PRECIP_OFF","PRECIP_ON","PRECIP_OFF"],
+            "state_synonyms": [
+              {
+                "original_state_names": ["HAIL", "RAIN", "SNOW"],
+                "json_state_name": "PRECIP_ON"
+              },
+              {
+                "original_state_names": ["SUNNY", "CLOUDY"],
+                "json_state_name": "PRECIP_OFF"
+              }
+            ]
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },
+      {
+        "description": "Example of states' intersection",
+        "scenario_name": "WEATHER_CROSS",
+        "signal": [
+          {
+            "name": "Weather in London",
+            "source_name": "weather_fsm0",
+            "wave": "333",
+            "data": ["RAIN","CLOUDY","SUNNY"],
+            "node": "..A"
+          },
+          {
+            "name": "Weather in Paris",
+            "wave": "44.4",
+            "data": ["HAIL","SUNNY","HAIL"],
+            "node": "..B",
+            "source_name": "weather_fsm1"
+          }
+        ],
+        "edge": [
+          "A~-B"
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },
+      {
+        "description": "Demonstrate exact event sequence coverage",
+        "scenario_name": "EXACT_EVENT",
+        "signal": [
+          {
+            "name": "weather_fsm0",
+            "wave": "2.3.4.",
+            "data": ["CLOUDY","HAIL","RAIN"],
+            "event_name": "My life event"
+          },
+          {
+            "name": "My life event",
+            "wave": "0.20..",
+            "data": ["Run for beer"],
+            "need_exact_sequence": 1
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },      
+      {
+        "description": "Full intersection example",
+        "scenario_name": "FULL_INTERSECT",
+        "full_intersection": [
+          [
+            "weather_fsm0",
+            "weather_fsm1"
+          ]
+        ],
+        "signal": [
+          {
+            "name": "weather_fsm0",
+            "wave": "4.4.4....",
+            "data": ["SUNNY","RAIN","SUNNY","RAIN"]
+          },
+          {
+            "name": "weather_fsm1",
+            "wave": "939..3.",
+            "data": ["RAIN","SUNNY","RAIN","SUNNY"]
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      }
+    ]
+  }

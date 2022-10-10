@@ -1,0 +1,4 @@
+source sourceme.bsh
+export PROJ_ROOT=`cygpath -w $PROJ_ROOT`
+export CENSOR_ROOT=`cygpath -w $CENSOR_ROOT`
+export SVUNIT_INSTALL=`cygpath -w $SVUNIT_INSTALL`
