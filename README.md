@@ -37,7 +37,7 @@ That's why you need Censor.
 # Censor
 Censor consists of two parts: a .Net tool that generates SystemVerilog code from a WaveDrom-like JSON and a bunch of SystemVerilog classes that match observed FSM states and events with expected ones (with input WaveDrom diagram). Generated SystemVerilog code contains a covergroup of a single coverpoint, with a bin for every scenario. The testbench samples states and events of the required FSMs and Censor covers a respective bin once the sampled FSM state and events match those described by WaveDrom.
 
-To get a quick view of the input JSON and output SV files, see `json/real_example.json` and the corresponding generated code in `sv/test/tb/weather_coverage.sv`.
+To get a quick view of the input JSON and output SV files, see `jsons/real_example.json` and the corresponding generated code in `sv/test/tb/weather_coverage.sv`.
 
 ## Installation
 1. Clone the repository.
