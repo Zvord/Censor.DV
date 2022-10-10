@@ -28,6 +28,7 @@ For example, imagine some SERDES with 3 modes of operation: transfer data, wait 
     }
 }
 ```
+![](imgs/intro.svg)
 
 Now return to the main question. How do you cover it? SystemVerilog has transition coverage, so you may be able to get away with just FSM state sequence coverage. Not very easy to write and maintain, but it's okay. But we need to account for events, too. Still looks manageble? Oh, wait, our device consists of TX and RX parts, actually! Now we have a cross of two FSMs and events and absolutely zero motivation to solve this problem with covergroups.
 
@@ -130,6 +131,8 @@ Let's see one example.
     ]
 }
 ```
+![](imgs/fsm_event.svg)
+
 This scenario describes the FSM `weather_fsm0` going through states RAIN, SUNNY and RAIN again. While the FSM is in state SUNNY, there should be an event called ECLIPSE.
 
 When Censor finds a WaveDrom line with either the `name` field that matched one of the FSM descriptions or `source_name`, it counts it as an FSM. Having separate `name` and `source_name` allow you to have a pretty-looking diagram without ugly names displayed.
@@ -169,6 +172,8 @@ When describing events, the duration of each event does not matter, it shall onl
     }
 }
 ```
+![](imgs/2fsms.svg)
+
 By default, any FSMs present in the `signal` are completely independent. The coverage will close once the most recent states of all listed FSMs will be the same as in the description. If you want to have a timed relationship between different FSMs, like "there should be a moment in time when FSM 1 is in state X and FSM 2 is in state Y", you have two options. The first one is present in this example: connect two states with `edge` and `node` properties. It sets the relationship only between the two connected states.
 
 The other option is to use the `full_intersection` property, like this:
@@ -185,6 +190,7 @@ The other option is to use the `full_intersection` property, like this:
     "signal": [
         ...
 ```
+<img src="https://svg.wavedrom.com/{signal:[{name:'clk',wave:'p......'},{name:'bus',wave:'x.34.5x',data:'head body tail'},{name:'wire',wave:'0.1..0.'}]}"/>
 It sets relationship between all states of the listed FSMs. 
 
 # FAQ
