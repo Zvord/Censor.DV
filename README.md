@@ -1,9 +1,9 @@
 # Dramatic introduction
-How do you know that important things has happened in simulation? By defining and analyzing functional coverage. How do you know that a particular scenario has been executing? Please don't tell me that you sample some covergroup at the end of the test. This way one can only be sure that the testcase has finished, not that it has done anything meaningfull. A more responsible approach is to define what is "scenario" and cover this definition.
+How do you know that important things have happened in a simulation? By defining and analyzing functional coverage. How do you know that a particular scenario has been executed? Please don't tell me that you sample some covergroup at the end of the test. This way one can only be sure that the testcase has finished, not that it has done anything meaningful. A more responsible approach is to define what is "scenario" is and cover this definition.
 
-Let's try to do that. A DUT can be viewed as one big FSM, but a "scenario" is a general description of DUT's adventures, so not every trigger matters. Thus there's an FSM inside DUT, whose state sequence together with inputs define a scenario. In other words, a scenario is DUT's FSM going through the sequence of expected states, while being stimulated with a particular inputs. 
+Let's try to do that. A DUT can be viewed as one big FSM, but a "scenario" is a general description of a DUT's adventures, so not every trigger matters. Thus there's an FSM inside DUT, whose state sequence together with inputs defines a scenario. In other words, a scenario is DUT's FSM going through the sequence of expected states, while being stimulated with particular inputs. 
 
-For example, imagine some SERDES with 3 modes of operation: transfer data, wait for data, and power-saving. Configuration registers, link width and speed don't interest us, so the scenario boils down to the sequeence of FSM states: ACTIVE, IDLE, LOWPOWER. While configuration registers are not interesting, the fact they were accessed may in fact be important. We can view it as FSM inputs. Let's call such inputs *events*. Here's a scenario example.
+For example, imagine some SERDES with 3 modes of operation: transfer data, wait for data, and power-saving. Configuration registers, link width and speed don't interest us, so the scenario boils down to the sequence of FSM states: ACTIVE, IDLE, LOWPOWER. While configuration registers are not interesting, the fact they were accessed may in fact be important. We can view it as FSM inputs. Let's call such inputs *events*. Here's a scenario example.
 ```json
 {
     "signal": [
@@ -29,7 +29,7 @@ For example, imagine some SERDES with 3 modes of operation: transfer data, wait 
 }
 ```
 
-Now return to the main question. How do you cover it? SystemVerilog has transition coverage, so you may be able to get away with just FSM state sequence coverage. Not very easy to write and maintain, but okay. But we need to account for events, too. Still looks manageble? Oh, wait, our device consists of TX and RX parts, actually! Now we have a cross of two FSMs and events and absolutely zero motivation to solve this problem with covergroups.
+Now return to the main question. How do you cover it? SystemVerilog has transition coverage, so you may be able to get away with just FSM state sequence coverage. Not very easy to write and maintain, but it's okay. But we need to account for events, too. Still looks manageble? Oh, wait, our device consists of TX and RX parts, actually! Now we have a cross of two FSMs and events and absolutely zero motivation to solve this problem with covergroups.
 
 That's why you need Censor.
 
@@ -104,10 +104,10 @@ The `$schema` property is not necessary, but it'll help to write a correct JSON.
 
 The `class_name` property sets the name of the generated class. It's best to have it the same as the name of the output file, but the choice is yours. The `enum_name` property is the name of the enum type, which variable will be covered by an internal covergroup. The `covergroup_name` is self-explanatory.
 
-For each FSM in the TB you shall provide a description in `fsm_descriptions` array. It has two fields: `source_name` is the FSM name by which you will refer it in the SV source code. The `valid_states` describes possible states of the FSM. It can be extended with synonyms, as we will see below. Attempting to sample any other state will trigger an error from Censor.
+For each FSM in the TB, you shall provide a description in the `fsm_descriptions` array. It has two fields: `source_name` is the FSM name by which you will refer in the SV source code. The `valid_states` describe possible states of the FSM. It can be extended with synonyms, as we will see below. Attempting to sample any other state will trigger an error from Censor.
 
 ### Scenarios
-Each scenario is a WaveDrom-compatible JSON, which can be copy-pasted and rendered there. We will go through different example to show various features of CensorJSON.
+Each scenario is a WaveDrom-compatible JSON, which can be copy-pasted and rendered there. We will go through a different example to show various features of CensorJSON.
 #### One FSM and its event
 Let's see one example.
 ```json
@@ -130,11 +130,11 @@ Let's see one example.
     ]
 }
 ```
-This sceanrio describes the FSM `weather_fsm0` going through states RAIN, SUNNY and RAIN again. While the FSM is in state SUNNY, there should be an event called ECLIPSE.
+This scenario describes the FSM `weather_fsm0` going through states RAIN, SUNNY and RAIN again. While the FSM is in state SUNNY, there should be an event called ECLIPSE.
 
-When Censor finds a WaveDrom line with either `name` field that matched one of FSM descriptions, or `source_name`, it counts it as an FSM. Having separate `name` and `source_name` allow you to have a pretty looking diagram without ugly names displayed.
+When Censor finds a WaveDrom line with either the `name` field that matched one of the FSM descriptions or `source_name`, it counts it as an FSM. Having separate `name` and `source_name` allow you to have a pretty-looking diagram without ugly names displayed.
 
-The property `event_name` connects an FSM with its events. It shall correpond to one of the `name` fields among other WaveDrom lines.
+The property `event_name` connects an FSM with its events. It shall correspond to one of the `name` fields among other WaveDrom lines.
 
 When describing an FSM, particular `wave` values do not matter, they only should be between 2 and 9.
 
@@ -169,9 +169,9 @@ When describing events, the duration of each event does not matter, it shall onl
     }
 }
 ```
-By default any FSMs present in the `signal` are completely independent. The coverage will close once the most recent states of all listed FSMs will be the same as in the description. If you want to have a timed relationship between different FSMs, like "there should be a moment in time when FSM 1 is in state X and FSM 2 is in state Y", you have two options. The first one is present in this example: connect two states with `edge` and `node` properties. It sets the relationship only between the two connected states.
+By default, any FSMs present in the `signal` are completely independent. The coverage will close once the most recent states of all listed FSMs will be the same as in the description. If you want to have a timed relationship between different FSMs, like "there should be a moment in time when FSM 1 is in state X and FSM 2 is in state Y", you have two options. The first one is present in this example: connect two states with `edge` and `node` properties. It sets the relationship only between the two connected states.
 
-The other option is to use `full_intersection` property, like this:
+The other option is to use the `full_intersection` property, like this:
 ```json
 {
     "description": "Full intersection example",
@@ -189,12 +189,12 @@ It sets relationship between all states of the listed FSMs.
 
 # FAQ
 ## String names are bad, why don't you use enums?
-Strings are easy. Valid FSM states may vary from scenario to scenario. Shall we make a enum with *all* states? A enum per scenario? Where shall we keep all enums? Will all simulators be able to access a type inside a class?
+Strings are easy. Valid FSM states may vary from scenario to scenario. Shall we make an enum with *all* states? An enum per scenario? Where shall we keep all enums? Will all simulators be able to access a type inside a class?
 
-These are questions that require carefull consideration later. While strings just work now.
+These are questions that require careful consideration later. While strings just work now.
 
 ## How does Censor handle sampling the same state repeatedly, e.g. on each clock posedge?
-Two consecutive states with the same names are counted as one. In other words, observed states are not updated when the sampled state is the same as the last one. I have a plan to add option to alter this behaviour.
+Two consecutive states with the same names are counted as one. In other words, observed states are not updated when the sampled state is the same as the last one. I have a plan to add an option to alter this behaviour.
 
 # TODO
 - [ ] Installation script
