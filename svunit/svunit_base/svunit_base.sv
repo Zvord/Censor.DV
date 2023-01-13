@@ -72,7 +72,7 @@ endfunction
   This task reports the result for the test
 */
 function void svunit_base::report();
-  string str = (success)? "PASSED":"FAILED";
+  string str = (success == 1)? "PASSED":"FAILED";
   `INFO($sformatf("%0s::%0s", name, str));
 endfunction
 

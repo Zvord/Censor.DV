@@ -1,9 +1,13 @@
-import uvm_pkg::*;
-`include "uvm_macros.svh"
+`ifdef USE_UVM
+    import uvm_pkg::*;
+    `include "uvm_macros.svh"
+`endif
 import censor_pkg::*;
 
 class simple_example_coverage extends censor_base;
+`ifdef USE_UVM
     `uvm_component_utils(simple_example_coverage)
+`endif
     
     typedef enum {
         some_name
@@ -11,13 +15,14 @@ class simple_example_coverage extends censor_base;
     
     bit raw_coverage[enum_type_that_will_be_covered];
     
-    covergroup just_a_covergroup with function sample (enum_type_that_will_be_covered name);
-        coverpoint name;
-    endgroup
+    // covergroup just_a_covergroup with function sample (enum_type_that_will_be_covered name);
+    //     coverpoint name;
+    // endgroup
     
-    function new(string name = "simple_example_coverage", uvm_component parent = null);
-        super.new(name, parent);
-        just_a_covergroup = new();
+    function new(/*string name = "simple_example_coverage", uvm_component parent = null*/);
+        // VERILATOR #3868
+        // super.new(/*name, parent*/);
+        // just_a_covergroup = new();
         fill_scenarios();
         configure_fsms();
         finalize();
@@ -28,7 +33,7 @@ class simple_example_coverage extends censor_base;
         if (!$cast(e, id)) begin
             `uvm_fatal(get_name(), $sformatf("Method sample got an id %0d that does not correspond to any enum values of enum_type_to_cover", id))
         end
-        just_a_covergroup.sample(e);
+        // just_a_covergroup.sample(e);
         raw_coverage[e] = 1;
     endfunction
     

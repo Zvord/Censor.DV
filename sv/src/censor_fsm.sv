@@ -56,10 +56,15 @@ endfunction
 
 function void censor_fsm::add_state_to_pattern(string state_name);
     censor_state state;
-    if (state_synonyms.exists(state_name))
+    if (1 == state_synonyms.exists(state_name))
         state_name = state_synonyms[state_name];
     state = new(state_name);
-    state.start = states.size() == 0 ? 0 : states[$].stop;
+    begin
+        if (states.size() == 0)
+            state.start = 0;
+        else
+            state.start = states[$].stop;
+    end
     states.push_back(state);
     events_per_state.push_back('{});
     state.number = depth;

@@ -1,9 +1,14 @@
-import uvm_pkg::*;
-`include "uvm_macros.svh"
+
+`ifdef USE_UVM
+    import uvm_pkg::*;
+    `include "uvm_macros.svh"
+`endif
 import censor_pkg::*;
 
 class weather_coverage extends censor_base;
+`ifdef USE_UVM
     `uvm_component_utils(weather_coverage)
+`endif
     
     typedef enum {
         SUN_RAIN_SUN,
@@ -16,13 +21,13 @@ class weather_coverage extends censor_base;
     
     bit raw_coverage[weather_cg_enum];
     
-    covergroup weather_scenario_cg with function sample (weather_cg_enum name);
-        coverpoint name;
-    endgroup
+    // covergroup weather_scenario_cg with function sample (weather_cg_enum name);
+    //     coverpoint name;
+    // endgroup
     
-    function new(string name = "weather_coverage", uvm_component parent = null);
-        super.new(name, parent);
-        weather_scenario_cg = new();
+    function new(/*string name = "weather_coverage", uvm_component parent = null*/);
+        // super.new(name, parent);
+        // weather_scenario_cg = new();
         fill_scenarios();
         configure_fsms();
         finalize();
@@ -33,7 +38,7 @@ class weather_coverage extends censor_base;
         if (!$cast(e, id)) begin
             `uvm_fatal(get_name(), $sformatf("Method sample got an id %0d that does not correspond to any enum values of enum_type_to_cover", id))
         end
-        weather_scenario_cg.sample(e);
+        // weather_scenario_cg.sample(e);
         raw_coverage[e] = 1;
     endfunction
     

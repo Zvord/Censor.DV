@@ -20,106 +20,12 @@
 /**
  * The filter expression that controls which tests should run.
  */
-class filter;
 
-  /* local */ typedef class filter_for_single_pattern;
+class filter_for_single_pattern;
 
-  /* local */ typedef filter_for_single_pattern array_of_filters[];
-  /* local */ typedef string array_of_string[];
-
-  /* local */ typedef struct {
-    string positive;
-    string negative;
-  } filter_expression_parts;
-
-
-  local static const string error_msg = "Expected the filter to be of the type '<test_case>.<test>[:<test_case>.<test>]'";
-  local static filter single_instance;
-
-  local const filter_for_single_pattern positive_subfilters[];
-  local const filter_for_single_pattern negative_subfilters[];
-
-
-  static function filter get();
-    if (single_instance == null)
-      single_instance = new();
-    return single_instance;
-  endfunction
-
-
-  local function new();
-    string raw_filter = get_filter_value_from_run_script();
-    filter_expression_parts parts = get_filter_expression_parts(raw_filter);
-    positive_subfilters = get_subfilters(parts.positive);
-    if (parts.negative != "")
-      negative_subfilters = get_subfilters(parts.negative);
-  endfunction
-
-
-  local function string get_filter_value_from_run_script();
-    string result;
-    if (!$value$plusargs("SVUNIT_FILTER=%s", result))
-      $fatal(0, "Expected to receive a plusarg called 'SVUNIT_FILTER'");
-    return result;
-  endfunction
-
-
-  local function filter_expression_parts get_filter_expression_parts(string raw_filter);
-    string parts[];
-
-    if (raw_filter[0] == "-")
-      raw_filter = { "*", raw_filter };
-
-    parts = string_utils::split_by_char("-", raw_filter);
-    if (parts.size() > 2)
-      $fatal(0, "Expected at most a single '-' character.");
-
-    if (parts.size() == 1)
-      return '{ parts[0], "" };
-    return '{ parts[0], parts[1] };
-  endfunction
-
-
-  local function array_of_filters get_subfilters(string raw_filter);
-    filter_for_single_pattern result[$];
-    string patterns[];
-
-    if (raw_filter == "*") begin
-      filter_for_single_pattern filter_that_always_matches = new("*.*");
-      return '{ filter_that_always_matches };
-    end
-
-    patterns = string_utils::split_by_char(":", raw_filter);
-    foreach (patterns[i])
-      result.push_back(get_subfilter_from_non_trivial_expr(patterns[i]));
-    return result;
-  endfunction
-
-
-  local function filter_for_single_pattern get_subfilter_from_non_trivial_expr(string pattern);
-    filter_for_single_pattern result;
-    result = new(pattern);
-    return result;
-  endfunction
-
-
-  function bit is_selected(svunit_testcase tc, string test_name);
-    foreach (negative_subfilters[i])
-      if (negative_subfilters[i].is_selected(tc, test_name))
-        return 0;
-
-    foreach (positive_subfilters[i])
-      if (positive_subfilters[i].is_selected(tc, test_name))
-        return 1;
-
-    return 0;
-  endfunction
-
-
-  class filter_for_single_pattern;
-
-    local const string testcase;
-    local const string test;
+    local string testcase;
+    local string test;
+    local static const string error_msg = "Expected the filter to be of the type '<test_case>.<test>[:<test_case>.<test>]'";
 
     function new(string pattern);
       int unsigned dot_idx = get_dot_idx(pattern);
@@ -177,4 +83,112 @@ class filter;
 
   endclass
 
+class filter_expression_parts;
+  string positive;
+  string negative;
 endclass
+
+class filter;
+
+  // /* local */ typedef filter_for_single_pattern;
+
+  /* local */ typedef filter_for_single_pattern array_of_filters[];
+  /* local */ typedef string array_of_string[];
+
+  // VERILATOR-5.004 does not support unpacked struct
+  // /* local */ typedef struct {
+  //   string positive;
+  //   string negative;
+  // } filter_expression_parts;
+
+  
+  local static filter single_instance;
+
+  // VERILATOR 5.004 does considers const assignment in ctor to be illegal.
+  local /*const*/ filter_for_single_pattern positive_subfilters[];
+  local /*const*/ filter_for_single_pattern negative_subfilters[];
+
+
+  static function filter get();
+    if (single_instance == null)
+      single_instance = new();
+    return single_instance;
+  endfunction
+
+
+  local function new();
+    string raw_filter = get_filter_value_from_run_script();
+    filter_expression_parts parts = get_filter_expression_parts(raw_filter);
+    positive_subfilters = get_subfilters(parts.positive);
+    if (parts.negative != "")
+      negative_subfilters = get_subfilters(parts.negative);
+  endfunction
+
+
+  local function string get_filter_value_from_run_script();
+    string result;
+    if (!$value$plusargs("SVUNIT_FILTER=%s", result))
+      $fatal(0, "Expected to receive a plusarg called 'SVUNIT_FILTER'");
+    return result;
+  endfunction
+
+
+  local function filter_expression_parts get_filter_expression_parts(string raw_filter);
+    string parts[];
+    filter_expression_parts r = new;
+
+    if (raw_filter[0] == "-")
+      raw_filter = { "*", raw_filter };
+
+    parts = string_utils::split_by_char("-", raw_filter);
+    if (parts.size() > 2)
+      $fatal(0, "Expected at most a single '-' character.");
+
+    // VERILATOR
+    r.positive = parts[0];
+    if (parts.size() == 1)
+      r.negative = "";
+    else
+      r.negative = parts[1];
+    return r;
+  endfunction
+
+
+  local function array_of_filters get_subfilters(string raw_filter);
+    filter_for_single_pattern result[$];
+    string patterns[];
+
+    if (raw_filter == "*") begin
+      filter_for_single_pattern filter_that_always_matches = new("*.*");
+      return '{ filter_that_always_matches };
+    end
+
+    patterns = string_utils::split_by_char(":", raw_filter);
+    foreach (patterns[i])
+      result.push_back(get_subfilter_from_non_trivial_expr(patterns[i]));
+    return result;
+  endfunction
+
+
+  local function filter_for_single_pattern get_subfilter_from_non_trivial_expr(string pattern);
+    filter_for_single_pattern result;
+    result = new(pattern);
+    return result;
+  endfunction
+
+
+  function bit is_selected(svunit_testcase tc, string test_name);
+    foreach (negative_subfilters[i])
+      if (negative_subfilters[i].is_selected(tc, test_name))
+        return 0;
+
+    foreach (positive_subfilters[i])
+      if (positive_subfilters[i].is_selected(tc, test_name))
+        return 1;
+
+    return 0;
+  endfunction
+
+endclass
+
+  

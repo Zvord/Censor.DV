@@ -201,7 +201,7 @@ endfunction
   This task reports the results for the unit tests
 */
 function void svunit_testcase::report();
-  string success_str = (success)? "PASSED":"FAILED";
+  string success_str = (success == 1)? "PASSED":"FAILED";
 
   `INFO($sformatf("%0s (%0d of %0d tests passing)",
     success_str,

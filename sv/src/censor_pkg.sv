@@ -1,11 +1,19 @@
 `ifndef CENSOR_PKG__SV
 `define CENSOR_PKG__SV
 
-package censor_pkg;
+`ifndef USE_UVM
+    `define uvm_info(id, msg, verbosity) $display(msg);
+    `define uvm_warning(id, msg) $warning(msg);
+    `define uvm_error(id, msg) $error(msg);
+    `define uvm_fatal(id, msg) $fatal(msg);
 
+`endif
+
+package censor_pkg;
+`ifdef USE_UVM
     import uvm_pkg::*;
     `include "uvm_macros.svh"
-
+`endif
     `include "censor_state.sv"
     `include "censor_fsm.sv"
     `include "censor_scenario.sv"

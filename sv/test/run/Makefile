@@ -17,3 +17,6 @@ clean:
 
 run:
 	vsim -c -do 'run -all; quit' $(TOP) +SVUNIT_FILTER=*
+
+verilate:
+	verilator -f $(LIST) --cc --timing

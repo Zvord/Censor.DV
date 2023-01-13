@@ -55,7 +55,7 @@ endfunction
 
 
 function void censor_scenario::add_state_to_pattern(string fsm_name, string state_name);
-    if (!pattern_fsms.exists(fsm_name))
+    if (0 == pattern_fsms.exists(fsm_name))
         pattern_fsms[fsm_name] = new(fsm_name);
     pattern_fsms[fsm_name].add_state_to_pattern(state_name);
 endfunction

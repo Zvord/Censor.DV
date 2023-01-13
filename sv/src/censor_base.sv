@@ -1,10 +1,16 @@
+`ifdef USE_UVM
 virtual class censor_base extends uvm_component;
+`else
+virtual class censor_base;
+`endif
 
     protected censor_scenario scenarios[$];
 
     pure virtual function void fill_scenarios();
     pure virtual function void sample(int id);
+`ifdef USE_UVM
     extern function new(string name = "censor_base", uvm_component parent = null);
+`endif
     extern function void sample_state(string fsm_name, string fsm_state);
     extern function void sample_event(string fsm_name, string fsm_state);
     extern function void add_scenario(censor_scenario s);
@@ -13,11 +19,11 @@ virtual class censor_base extends uvm_component;
 
 endclass
 
-
+`ifdef USE_UVM
 function censor_base::new(string name = "censor_base", uvm_component parent = null);
     super.new(name, parent);
 endfunction
-
+`endif
 
 function void censor_base::sample_state(string fsm_name, string fsm_state);
     foreach(scenarios[i]) begin
