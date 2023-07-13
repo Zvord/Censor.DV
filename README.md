@@ -195,6 +195,296 @@ The other option is to use the `full_intersection` property, like this:
 <img src="https://svg.wavedrom.com/{signal:[{name:'clk',wave:'p......'},{name:'bus',wave:'x.34.5x',data:'head body tail'},{name:'wire',wave:'0.1..0.'}]}"/>
 It sets relationship between all states of the listed FSMs. 
 
+# Example
+Consider the following JSON file with scenarios:
+```json
+{
+  "$schema": "../mySchema.json",
+  "class_name": "weather_coverage",
+  "enum_name": "weather_cg_enum",
+  "covergroup_name": "weather_scenario_cg",
+  "fsm_descriptions": [
+    {
+      "source_name": "weather_fsm0",
+      "valid_states": ["SUNNY", "CLOUDY", "RAIN", "SNOW", "HAIL"]
+    },
+    {
+      "source_name": "weather_fsm1",
+      "valid_states": ["SUNNY", "CLOUDY", "RAIN", "SNOW", "HAIL"]
+    },
+    {
+      "source_name": "leisure_fsm",
+      "valid_states": ["WALK","SLEEP","MOVIE","CAFE","BIKE"]
+    }
+  ],
+    "scenarios": [
+      {
+        "description": "Sudden rain during a sunny day",
+        "scenario_name": "SUN_RAIN_SUN",
+        "signal": [
+          {
+            "name": "Weather",
+            "wave": "2.3.4.",
+            "data": ["SUNNY","RAIN","SUNNY"],
+            "source_name": "weather_fsm0"
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },
+      {
+        "description": "Eclipse in the rain",
+        "scenario_name": "ECLIPSE_EVENT",
+        "signal": [
+          {
+            "name": "Weather",
+            "wave": "2.3.4.",
+            "data": ["RAIN","SUNNY","RAIN"],
+            "event_name": "Weather event",
+            "source_name": "weather_fsm0"
+          },
+          {
+            "name": "Weather event",
+            "wave": "0.2.0.",
+            "data": ["ECLIPSE"]
+          }
+        ]
+      },
+      {
+        "description": "ALIASES_EXAMPLE",
+        "scenario_name": "PRECIPATION_ON_OFF",
+        "signal": [
+          {
+            "name": "Weather",
+            "source_name": "weather_fsm0",
+            "wave": "2.3.4.2.",
+            "data": ["PRECIP_ON","PRECIP_OFF","PRECIP_ON","PRECIP_OFF"],
+            "state_synonyms": [
+              {
+                "original_state_names": ["HAIL", "RAIN", "SNOW"],
+                "json_state_name": "PRECIP_ON"
+              },
+              {
+                "original_state_names": ["SUNNY", "CLOUDY"],
+                "json_state_name": "PRECIP_OFF"
+              }
+            ]
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },
+      {
+        "description": "Example of states' intersection",
+        "scenario_name": "WEATHER_CROSS",
+        "signal": [
+          {
+            "name": "Weather in London",
+            "source_name": "weather_fsm0",
+            "wave": "333",
+            "data": ["RAIN","CLOUDY","SUNNY"],
+            "node": "..A"
+          },
+          {
+            "name": "Weather in Paris",
+            "wave": "44.4",
+            "data": ["HAIL","SUNNY","HAIL"],
+            "node": "..B",
+            "source_name": "weather_fsm1"
+          }
+        ],
+        "edge": [
+          "A~-B"
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },
+      {
+        "description": "Demonstrate exact event sequence coverage",
+        "scenario_name": "EXACT_EVENT",
+        "signal": [
+          {
+            "name": "weather_fsm0",
+            "wave": "2.3.4.",
+            "data": ["CLOUDY","HAIL","RAIN"],
+            "event_name": "My life event"
+          },
+          {
+            "name": "My life event",
+            "wave": "0.20..",
+            "data": ["Run for beer"],
+            "need_exact_sequence": 1
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      },      
+      {
+        "description": "Full intersection example",
+        "scenario_name": "FULL_INTERSECT",
+        "full_intersection": [
+          [
+            "weather_fsm0",
+            "weather_fsm1"
+          ]
+        ],
+        "signal": [
+          {
+            "name": "weather_fsm0",
+            "wave": "4.4.4....",
+            "data": ["SUNNY","RAIN","SUNNY","RAIN"]
+          },
+          {
+            "name": "weather_fsm1",
+            "wave": "939..3.",
+            "data": ["RAIN","SUNNY","RAIN","SUNNY"]
+          }
+        ],
+        "config": {
+          "hscale": 2
+        }
+      }
+    ]
+  }
+```
+
+Below is the generated SV code.
+```systemverilog
+import uvm_pkg::*;
+`include "uvm_macros.svh"
+import censor_pkg::*;
+
+class weather_coverage extends censor_base;
+    `uvm_component_utils(weather_coverage)
+    
+    typedef enum {
+        SUN_RAIN_SUN,
+        ECLIPSE_EVENT,
+        PRECIPATION_ON_OFF,
+        WEATHER_CROSS,
+        EXACT_EVENT,
+        FULL_INTERSECT
+    } weather_cg_enum;
+    
+    bit raw_coverage[weather_cg_enum];
+    
+    covergroup weather_scenario_cg with function sample (weather_cg_enum name);
+        coverpoint name;
+    endgroup
+    
+    function new(string name = "weather_coverage", uvm_component parent = null);
+        super.new(name, parent);
+        weather_scenario_cg = new();
+        fill_scenarios();
+        configure_fsms();
+        finalize();
+    endfunction
+    
+    function void sample(int id);
+        weather_cg_enum e;
+        if (!$cast(e, id)) begin
+            `uvm_fatal(get_name(), $sformatf("Method sample got an id %0d that does not correspond to any enum values of enum_type_to_cover", id))
+        end
+        weather_scenario_cg.sample(e);
+        raw_coverage[e] = 1;
+    endfunction
+    
+    function void fill_scenarios();
+        begin
+            weather_cg_enum e = SUN_RAIN_SUN;
+            censor_scenario s = new(e.name(), int'(e));
+            void'(s.add_state_to_pattern("weather_fsm0", "SUNNY"));
+            void'(s.add_state_to_pattern("weather_fsm0", "RAIN"));
+            void'(s.add_state_to_pattern("weather_fsm0", "SUNNY"));
+            add_scenario(s);
+        end
+        begin
+            weather_cg_enum e = ECLIPSE_EVENT;
+            censor_scenario s = new(e.name(), int'(e));
+            void'(s.add_state_to_pattern("weather_fsm0", "RAIN"));
+            void'(s.add_state_to_pattern("weather_fsm0", "SUNNY"));
+            void'(s.add_event_to_pattern("weather_fsm0", "ECLIPSE"));
+            void'(s.add_state_to_pattern("weather_fsm0", "RAIN"));
+            add_scenario(s);
+        end
+        begin
+            weather_cg_enum e = PRECIPATION_ON_OFF;
+            censor_scenario s = new(e.name(), int'(e));
+            void'(s.add_state_to_pattern("weather_fsm0", "PRECIP_ON"));
+            void'(s.add_state_to_pattern("weather_fsm0", "PRECIP_OFF"));
+            void'(s.add_state_to_pattern("weather_fsm0", "PRECIP_ON"));
+            void'(s.add_state_to_pattern("weather_fsm0", "PRECIP_OFF"));
+            s.add_state_synonym("weather_fsm0", "HAIL", "PRECIP_ON");
+            s.add_state_synonym("weather_fsm0", "RAIN", "PRECIP_ON");
+            s.add_state_synonym("weather_fsm0", "SNOW", "PRECIP_ON");
+            s.add_state_synonym("weather_fsm0", "SUNNY", "PRECIP_OFF");
+            s.add_state_synonym("weather_fsm0", "CLOUDY", "PRECIP_OFF");
+            add_scenario(s);
+        end
+        begin
+            weather_cg_enum e = WEATHER_CROSS;
+            censor_scenario s = new(e.name(), int'(e));
+            void'(s.add_state_to_pattern("weather_fsm0", "RAIN"));
+            void'(s.add_state_to_pattern("weather_fsm1", "HAIL"));
+            void'(s.add_state_to_pattern("weather_fsm0", "CLOUDY"));
+            void'(s.add_state_to_pattern("weather_fsm1", "SUNNY"));
+            void'(s.add_state_to_pattern("weather_fsm0", "SUNNY"));
+            s.add_intersection("weather_fsm0", "weather_fsm1");
+            void'(s.add_state_to_pattern("weather_fsm1", "HAIL"));
+            add_scenario(s);
+        end
+        begin
+            weather_cg_enum e = EXACT_EVENT;
+            censor_scenario s = new(e.name(), int'(e));
+            void'(s.add_state_to_pattern("weather_fsm0", "CLOUDY"));
+            void'(s.add_state_to_pattern("weather_fsm0", "HAIL"));
+            void'(s.add_event_to_pattern("weather_fsm0", "Run for beer"));
+            void'(s.add_state_to_pattern("weather_fsm0", "RAIN"));
+            add_scenario(s);
+        end
+        begin
+            weather_cg_enum e = FULL_INTERSECT;
+            censor_scenario s = new(e.name(), int'(e));
+            void'(s.add_state_to_pattern("weather_fsm0", "SUNNY"));
+            void'(s.add_state_to_pattern("weather_fsm1", "RAIN"));
+            s.add_intersection("weather_fsm0", "weather_fsm1");
+            void'(s.add_state_to_pattern("weather_fsm1", "SUNNY"));
+            s.add_intersection("weather_fsm0", "weather_fsm1");
+            void'(s.add_state_to_pattern("weather_fsm0", "RAIN"));
+            void'(s.add_state_to_pattern("weather_fsm1", "RAIN"));
+            s.add_intersection("weather_fsm0", "weather_fsm1");
+            void'(s.add_state_to_pattern("weather_fsm0", "SUNNY"));
+            s.add_intersection("weather_fsm0", "weather_fsm1");
+            void'(s.add_state_to_pattern("weather_fsm1", "SUNNY"));
+            s.add_intersection("weather_fsm0", "weather_fsm1");
+            add_scenario(s);
+        end
+    endfunction
+    
+    function void configure_fsms();
+        add_valid_state("weather_fsm0", "SUNNY");
+        add_valid_state("weather_fsm0", "CLOUDY");
+        add_valid_state("weather_fsm0", "RAIN");
+        add_valid_state("weather_fsm0", "SNOW");
+        add_valid_state("weather_fsm0", "HAIL");
+        add_valid_state("weather_fsm1", "SUNNY");
+        add_valid_state("weather_fsm1", "CLOUDY");
+        add_valid_state("weather_fsm1", "RAIN");
+        add_valid_state("weather_fsm1", "SNOW");
+        add_valid_state("weather_fsm1", "HAIL");
+        add_valid_state("leisure_fsm", "WALK");
+        add_valid_state("leisure_fsm", "SLEEP");
+        add_valid_state("leisure_fsm", "MOVIE");
+        add_valid_state("leisure_fsm", "CAFE");
+        add_valid_state("leisure_fsm", "BIKE");
+    endfunction
+endclass
+```
+
 # FAQ
 ## String names are bad, why don't you use enums?
 Strings are easy. Valid FSM states may vary from scenario to scenario. Shall we make an enum with *all* states? An enum per scenario? Where shall we keep all enums? Will all simulators be able to access a type inside a class?
