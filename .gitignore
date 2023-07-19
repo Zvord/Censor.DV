@@ -4,3 +4,7 @@
 .DS_Store
 
 # Questa
+transcript
+
+# Generated files
+sv/test/tb/weather_coverage.sv
