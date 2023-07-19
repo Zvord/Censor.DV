@@ -1,7 +1,11 @@
+ifdef ARCH
+	ARCH_FLAG=-r $(ARCH)
+endif
+
 .PHONY: all clean
 
 publish:
-	dotnet publish src/Censor --configuration=Release --output=./bin/
+	dotnet publish src/Censor --configuration=Release --output=./bin/ $(ARCH_FLAG)
 
 clean:
 	dotnet clean
