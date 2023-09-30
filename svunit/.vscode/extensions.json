@@ -1,9 +1,0 @@
-{
-  "recommendations": [
-    "editorconfig.editorconfig",
-    "eamodio.gitlens",
-    "eirikpre.systemverilog",
-    "ms-python.python",
-    "ms-python.vscode-pylance"
-  ]
-}

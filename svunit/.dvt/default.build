@@ -1,4 +1,0 @@
--incdir svunit_base/junit-xml
-svunit_base/junit-xml/*.sv
--incdir svunit_base
-svunit_base/svunit_pkg.sv
